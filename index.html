@@ -105,6 +105,27 @@
     </form>
     <!-- end of form modal -->
 
+    <!-- help modal start -->
+    <form class="modal" id="help-modal">
+      <div class="modal-content">
+        <div class="modal-head">
+          <h3 id="modal-title">Help</h3>
+          <button type="button" id="help-close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <ul>
+            <li>
+              1. when bouble click on contact list show update and delete option
+            </li>
+          </ul>
+        </div>
+      </div>
+    </form>
+    <!-- help modal end -->
+
     <!-- address book home -->
     <div class="addr-book" id="addr-book">
       <div class="addr-book-content">
@@ -117,6 +138,18 @@
           <button type="button" class="btn" id="add-btn">
             <span><i class="fas fa-plus"></i> Add Contacts</span>
           </button>
+
+          <div>
+            <input
+              type="text"
+              placeholder="Search By name"
+              id="search"
+              autocomplete="off"
+            />
+          </div>
+          <div>
+            <button class="btn" id="how-to-use-btn">How to use?</button>
+          </div>
         </div>
 
         <div class="addr-book-list" id="addr-book-list">

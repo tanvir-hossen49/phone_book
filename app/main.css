@@ -74,7 +74,8 @@ button {
 .modal-head h3 {
   color: #fff;
 }
-#close-btn {
+#close-btn,
+#help-close-btn {
   background-color: transparent;
   font-size: 1.4rem;
   position: absolute;
@@ -96,7 +97,8 @@ button {
   -o-transition: all 200ms ease;
   transition: all 200ms ease;
 }
-#close-btn:hover {
+#close-btn:hover,
+#help-close-btn:hover {
   -webkit-transform: scale(1.1);
   -ms-transform: scale(1.1);
   transform: scale(1.1);
@@ -212,6 +214,15 @@ button {
 }
 .addr-book-top {
   padding: 1rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.addr-book-top input {
+  border: none;
+  outline: none;
+  border-bottom: 1px solid black;
+  font-size: 1.4rem;
 }
 .addr-book-top .btn {
   color: #fff;

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MailBook</title>
+    <link rel="stylesheet" href="app/main.css" />
+    <!-- font awesome icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <!-- form modal -->
+    <div id="fullscreen-div"></div>
+
+    <form class="modal" id="modal">
+      <div class="modal-content">
+        <div class="modal-head">
+          <h3 id="modal-title">Add Contacts</h3>
+          <button type="button" id="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-main">
+          <div class="modal-row grid-row">
+            <div class="modal-col">
+              <label for="">First Name</label>
+              <input
+                type="text"
+                placeholder="The first name"
+                class="form-control"
+                id="first-name"
+                name="first_name"
+              />
+            </div>
+            <div class="modal-col">
+              <label for="">Last Name</label>
+              <input
+                type="text"
+                placeholder="The last name"
+                class="form-control"
+                id="last-name"
+                name="last_name"
+              />
+            </div>
+          </div>
+
+          <div class="modal-row grid-row">
+            <div class="modal-col">
+              <label for="">Email</label>
+              <input
+                type="email"
+                placeholder="The email"
+                class="form-control"
+                name="email"
+                id="email"
+              />
+            </div>
+            <div class="modal-col">
+              <label for="">Phone</label>
+              <input
+                type="number"
+                placeholder="The phone number"
+                class="form-control"
+                name="phone"
+                id="phone-number"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div class="modal-row grid-row">
+            <div class="modal-col">
+              <label for="">Address</label>
+              <input
+                type="text"
+                placeholder="City name"
+                class="form-control"
+                name="city"
+                id="address"
+              />
+            </div>
+            <div class="modal-col">
+              <label for="">Country</label>
+              <select id="country-list" name="country">
+                <option selected>Bangladesh</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-row" id="modal-btns"></div>
+        </div>
+      </div>
+    </form>
+    <!-- end of form modal -->
+
+    <!-- address book home -->
+    <div class="addr-book" id="addr-book">
+      <div class="addr-book-content">
+        <div class="addr-book-head">
+          <i class="fa-solid fa-address-book fa-2x"></i>
+          <h2>Phone Book</h2>
+        </div>
+
+        <div class="addr-book-top">
+          <button type="button" class="btn" id="add-btn">
+            <span><i class="fas fa-plus"></i> Add Contacts</span>
+          </button>
+        </div>
+
+        <div class="addr-book-list" id="addr-book-list">
+          <table class="addr-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Phone No.</th>
+                <th>E-mail</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- end of address book home -->
+
+    <script src="app/app.js"></script>
+  </body>
+</html>

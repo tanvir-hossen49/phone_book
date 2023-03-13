@@ -216,7 +216,20 @@ button {
   padding: 1rem 0;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
+}
+@media screen and (max-width: 650px) {
+  .addr-book-top {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .addr-book-top .search-content {
+    order: 1;
+  }
 }
 .addr-book-top input {
   border: none;

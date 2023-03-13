@@ -23,13 +23,14 @@ function main() {
     modal = document.getElementById("modal"),
     modalBtn = document.getElementById("modal-btns"),
     search = document.getElementById("search"),
+    arraySize = document.getElementById("size"),
     howToUseBtn = document.getElementById("how-to-use-btn"),
     helpCloseBtn = document.getElementById("help-close-btn");
 
   //event listener
   addBtn.addEventListener("click", () => {
     showModal("modal");
-
+    getStorage(arraySize);
     modalBtn.innerHTML = `
       <button type ="submit" id="save-btn" onclick='getAndSetValue()'> Save </button>
     `;
@@ -67,8 +68,10 @@ const hideModal = (id) => {
   const modal = document.getElementById(id);
   const fullScreenDiv = document.getElementById("fullscreen-div");
   fullScreenDiv.style.display = "none";
-  modal.style.display = "none";
-  modal.reset();
+  if (id === "modal") {
+    modal.style.display = "none";
+    modal.reset();
+  }
 };
 const getAndSetValue = () => {
   if (!formInputValue()) return;
@@ -83,7 +86,7 @@ const getAndSetValue = () => {
   }
 
   setLocalStorage("phoneBook", phoneBook);
-  hideModal();
+  hideModal("modal");
   showContactList();
 };
 const showModalData = (event, modalBtn) => {
@@ -181,6 +184,10 @@ const showContactList = () => {
         </tr>
       `;
   });
+};
+const getStorage = (arraySize) => {
+  let phoneBookSize = new Blob([JSON.stringify(phoneBook)]).size;
+  arraySize.innerText = phoneBookSize / 1000 + "KB";
 };
 
 //---------------UTILITIES---------------

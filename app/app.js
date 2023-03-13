@@ -25,7 +25,8 @@ function main() {
     search = document.getElementById("search"),
     arraySize = document.getElementById("size"),
     howToUseBtn = document.getElementById("how-to-use-btn"),
-    helpCloseBtn = document.getElementById("help-close-btn");
+    helpCloseBtn = document.getElementById("help-close-btn"),
+    sortByDate = document.getElementById("sort-by-date");
 
   //event listener
   addBtn.addEventListener("click", () => {
@@ -49,6 +50,17 @@ function main() {
     hideModal("help-modal");
   });
   search.addEventListener("keyup", searchName);
+  sortByDate.addEventListener("change", (e) => {
+    if (e.target.value === "ascending") {
+      sortContact((a, b) => {
+        return new Date(a.date).valueOf() - new Date(b.date).valueOf();
+      });
+    } else {
+      sortContact((a, b) => {
+        return b.date - a.date;
+      });
+    }
+  });
 }
 //----------------FETCH DATA-----------------
 async function loadJSON() {
@@ -76,8 +88,14 @@ const hideModal = (id) => {
 const getAndSetValue = () => {
   if (!formInputValue()) return;
 
+  let time = new Date();
+  let day = time.getDate();
+  let month = time.getMonth();
+  let year = time.getFullYear();
+
   let person = {
     id: generateId(),
+    date: `${month + 1}/${day}/${year}`,
     ...formInputValue(),
   };
 
@@ -122,7 +140,7 @@ const updateContact = (id) => {
   if (!formInputValue()) return;
 
   phoneBook[index] = {
-    id: id,
+    ...phoneBook[index],
     ...formInputValue(),
   };
 
@@ -158,7 +176,16 @@ const searchName = (e) => {
     }
   });
 };
+const sortContact = (callBack) => {
+  // if (phoneBook.length === 0) return;
 
+  phoneBook.sort(callBack);
+
+  console.log("phoneBook", phoneBook);
+  showContactList();
+};
+
+console.log(phoneBook);
 //---------------DOM FUNCTION---------------
 const generateCountryOption = (data) => {
   const countryList = document.getElementById("country-list");
@@ -173,7 +200,7 @@ const showContactList = () => {
   tableBody.innerHTML = "";
 
   phoneBook.forEach((element, index) => {
-    let { id, firstName, lastName, email, phone, address } = element;
+    let { id, firstName, lastName, email, phone, address, date } = element;
     tableBody.innerHTML += `
         <tr>
           <td data-id='${id}'>${++index}</td>
@@ -181,6 +208,7 @@ const showContactList = () => {
           <td>${address}</td>
           <td>${phone}</td>
           <td>${email}</td>
+          <td>${date}</td>
         </tr>
       `;
   });

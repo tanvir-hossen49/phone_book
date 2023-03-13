@@ -273,6 +273,12 @@ button {
 .addr-table thead tr th {
   padding-bottom: 0.8rem;
 }
+#sort-by-date {
+  font-size: 14px;
+  border-radius: 5px;
+  padding: 4px;
+  margin-left: 10px;
+}
 .addr-table tbody td {
   padding: 1.5rem 0;
   color: rgba(0, 0, 0, 0.6);

@@ -250,6 +250,9 @@ button {
   color: rgba(0, 0, 0, 0.6);
   font-weight: 600;
 }
+.addr-table tbody td:nth-child(2) {
+  text-transform: capitalize;
+}
 .addr-table tbody td:nth-child(1) {
   padding-left: 0.5rem;
   padding-right: 1rem;

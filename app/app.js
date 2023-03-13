@@ -57,11 +57,11 @@ function hideModal() {
   form.reset();
 }
 function getAndSetValue() {
-  if (!formValue()) return;
+  if (!formInputValue()) return;
 
   let person = {
     id: phoneBook.length + 1,
-    ...formValue(),
+    ...formInputValue(),
   };
 
   if (phoneBook) {
@@ -83,7 +83,7 @@ function showModalData(event) {
   let { id, firstName, lastName, email, phone, address, country } = targetedObj;
 
   let { firstNameEl, lastNameEl, emailEl, phoneEl, addressEl, countryEl } =
-    formRef();
+    formInputRef();
 
   // replace value
   firstNameEl.value = firstName;
@@ -102,11 +102,11 @@ function showModalData(event) {
 function updateContact(id) {
   let index = phoneBook.findIndex((item) => item.id === id);
 
-  if (!formValue()) return;
+  if (!formInputValue()) return;
 
   phoneBook[index] = {
     id: id,
-    ...formValue(),
+    ...formInputValue(),
   };
 
   setLocalStorage("phoneBook", phoneBook);
@@ -150,7 +150,7 @@ function showContactList() {
 }
 
 //---------------UTILITIES---------------
-function formRef() {
+function formInputRef() {
   const firstNameEl = document.getElementById("first-name"),
     lastNameEl = document.getElementById("last-name"),
     emailEl = document.getElementById("email"),
@@ -167,9 +167,9 @@ function formRef() {
     countryEl,
   };
 }
-function formValue() {
+function formInputValue() {
   let { firstNameEl, lastNameEl, emailEl, phoneEl, addressEl, countryEl } =
-    formRef();
+    formInputRef();
 
   let obj = {
     firstName: firstNameEl.value,

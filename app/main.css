@@ -16,6 +16,7 @@
 body {
   font-family: "Nunito", sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
   background-color: var(--light-grey-color);
 }
 h1,
@@ -100,10 +101,12 @@ button {
   -ms-transform: scale(1.1);
   transform: scale(1.1);
 }
+.modal {
+  max-width: 580px;
+  width: 90%;
+}
 .modal-main {
   padding: 1.2rem 2.4rem 1rem 2.4rem;
-  max-width: 580px;
-  min-width: 500px;
 }
 .modal-row {
   margin-bottom: 1.2rem;
@@ -181,7 +184,6 @@ button {
   padding: 1.4rem;
   margin: 0 auto;
   max-width: 1200px;
-  min-width: 700px !important;
 }
 .addr-book-content {
   background-color: #fff;
@@ -232,10 +234,12 @@ button {
 .addr-book-list {
   margin: 1rem 0;
   min-height: 450px;
+  overflow-x: auto;
 }
 .addr-table {
   margin-top: 2rem;
   width: 100%;
+  min-width: 700px;
   text-align: left;
   border-collapse: collapse;
 }

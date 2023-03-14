@@ -6,12 +6,19 @@
 
 //----------------GLOBAL VARIABLES-----------------
 let phoneBook = JSON.parse(localStorage.getItem("phoneBook")) || [];
+console.log(phoneBook);
+const firstNameEl = document.getElementById("first-name"),
+  lastNameEl = document.getElementById("last-name"),
+  emailEl = document.getElementById("email"),
+  phoneEl = document.getElementById("phone-number"),
+  upazilaEl = document.getElementById("upazila-list"),
+  districtEl = document.getElementById("district-list");
 
 //----------------ON LOAD HANDLER-----------------
 window.onload = () => {
   main();
-  loadJSON();
-  showContactList();
+  loadDistrictData();
+  displayContractList();
 };
 
 //----------------BOOT FUNCTION-----------------
@@ -25,28 +32,29 @@ function main() {
     search = document.getElementById("search"),
     arraySize = document.getElementById("size"),
     howToUseBtn = document.getElementById("how-to-use-btn"),
-    helpCloseBtn = document.getElementById("help-close-btn"),
-    sortByDate = document.getElementById("sort-by-date");
+    howToUseCloseBtn = document.getElementById("how-to-use-close-btn"),
+    sortByDate = document.getElementById("sort-by-date"),
+    districtList = document.getElementById("district-list");
 
   //event listener
   addBtn.addEventListener("click", () => {
     showModal("modal");
-    getStorage(arraySize);
+    showStorageInModal(arraySize);
     modalBtn.innerHTML = `
-      <button type ="submit" id="save-btn" onclick='getAndSetValue()'> Save </button>
+      <button type ="submit" id="save-btn" onclick='createContact()'> Save </button>
     `;
   });
   closeBtn.addEventListener("click", () => {
     hideModal("modal");
   });
   tableBody.addEventListener("dblclick", (event) => {
-    showModalData(event, modalBtn);
+    displayModalData(event, modalBtn);
   });
   modal.addEventListener("submit", (e) => e.preventDefault());
   howToUseBtn.addEventListener("click", () => {
     showModal("help-modal");
   });
-  helpCloseBtn.addEventListener("click", () => {
+  howToUseCloseBtn.addEventListener("click", () => {
     hideModal("help-modal");
   });
   search.addEventListener("keyup", searchName);
@@ -61,12 +69,32 @@ function main() {
       });
     }
   });
+  districtList.addEventListener("change", function (e) {
+    const districtId =
+      e.target.selectedOptions[0].getAttribute("--data-district-id");
+    loadUpazilasData(districtId);
+  });
 }
 //----------------FETCH DATA-----------------
-async function loadJSON() {
-  const response = await fetch("app/countries.json");
+async function loadDistrictData() {
+  const response = await fetch("app/json/districts.json");
   const data = await response.json();
-  generateCountryOption(data);
+
+  let newArray = data.reduce((acc, curr) => {
+    acc.push({
+      name: curr.name,
+      id: curr.id,
+    });
+    return acc;
+  }, []);
+
+  createDistrictDropdown(newArray);
+}
+async function loadUpazilasData(districtId) {
+  const response = await fetch("app/json/upazilas.json");
+  const data = await response.json();
+  const upazilaList = data.filter((data) => data.district_id === districtId);
+  createUpazilaDropdown(upazilaList);
 }
 
 //---------------EVENT HANDLER---------------
@@ -80,12 +108,12 @@ const hideModal = (id) => {
   const modal = document.getElementById(id);
   const fullScreenDiv = document.getElementById("fullscreen-div");
   fullScreenDiv.style.display = "none";
+  modal.style.display = "none";
   if (id === "modal") {
-    modal.style.display = "none";
     modal.reset();
   }
 };
-const getAndSetValue = () => {
+const createContact = () => {
   if (!formInputValue()) return;
 
   let time = new Date();
@@ -105,9 +133,9 @@ const getAndSetValue = () => {
 
   setLocalStorage("phoneBook", phoneBook);
   hideModal("modal");
-  showContactList();
+  displayContractList();
 };
-const showModalData = (event, modalBtn) => {
+const displayModalData = (event, modalBtn) => {
   showModal("modal");
 
   const selectedId =
@@ -115,45 +143,43 @@ const showModalData = (event, modalBtn) => {
 
   const targetedObj = phoneBook.find((item) => item.id === selectedId);
 
-  let { id, firstName, lastName, email, phone, address, country } = targetedObj;
-
-  let { firstNameEl, lastNameEl, emailEl, phoneEl, addressEl, countryEl } =
-    formInputRef();
+  let { id, firstName, lastName, email, phone, district, upazila } =
+    targetedObj;
 
   // replace value
   firstNameEl.value = firstName;
   lastNameEl.value = lastName;
   emailEl.value = email;
   phoneEl.value = phone;
-  addressEl.value = address;
-  countryEl.value = country;
+  districtEl.value = district;
+  upazilaEl.value = upazila;
+  console.log(upazila);
 
   document.getElementById("modal-title").innerHTML = "Change Contact Details";
   modalBtn.innerHTML = `
     <button type = "submit" id="update-btn" onclick='updateContact("${id}")'>Update </button>
-    <button type = "button" id="delete-btn" onclick='deleteData("${id}")'>Delete </button>
+    <button type = "button" id="delete-btn" onclick='deleteContact("${id}")'>Delete </button>
   `;
 };
 const updateContact = (id) => {
   let index = phoneBook.findIndex((item) => item.id == id);
 
   if (!formInputValue()) return;
-
   phoneBook[index] = {
     ...phoneBook[index],
     ...formInputValue(),
   };
 
   setLocalStorage("phoneBook", phoneBook);
-  showContactList();
+  displayContractList();
   hideModal("modal");
 };
-const deleteData = (id) => {
+const deleteContact = (id) => {
   const index = phoneBook.findIndex((item) => item.id === id);
   phoneBook.splice(index, 1);
 
   setLocalStorage("phoneBook", phoneBook);
-  showContactList();
+  displayContractList();
   hideModal("modal");
 };
 const searchName = (e) => {
@@ -177,35 +203,52 @@ const searchName = (e) => {
   });
 };
 const sortContact = (callBack) => {
-  // if (phoneBook.length === 0) return;
+  if (phoneBook.length === 0) return;
 
   phoneBook.sort(callBack);
 
   console.log("phoneBook", phoneBook);
-  showContactList();
+  displayContractList();
 };
 
-console.log(phoneBook);
 //---------------DOM FUNCTION---------------
-const generateCountryOption = (data) => {
-  const countryList = document.getElementById("country-list");
-  countryList.innerHTML += data.map((country) => {
-    return `
-      <option>${country.country}</option>
+const createDistrictDropdown = (data) => {
+  const districtList = document.getElementById("district-list");
+  districtList.innerHTML += data
+    .map((district) => {
+      return `
+      <option value='${district.name.toLowerCase()}' --data-district-id='${
+        district.id
+      }'>${district.name}</option>
     `;
-  });
+    })
+    .join("");
 };
-const showContactList = () => {
+const createUpazilaDropdown = (data) => {
+  const upazilaList = document.getElementById("upazila-list");
+
+  upazilaList.innerHTML = "";
+
+  upazilaList.innerHTML += data
+    .map((upazila) => {
+      return `
+      <option value='${upazila.name}'>${upazila.name}</option>
+    `;
+    })
+    .join("");
+};
+const displayContractList = () => {
   const tableBody = document.getElementById("table-body");
   tableBody.innerHTML = "";
 
   phoneBook.forEach((element, index) => {
-    let { id, firstName, lastName, email, phone, address, date } = element;
+    let { id, firstName, lastName, email, phone, date, district, upazila } =
+      element;
     tableBody.innerHTML += `
         <tr>
           <td data-id='${id}'>${++index}</td>
           <td>${firstName} ${lastName}</td>
-          <td>${address}</td>
+          <td>${upazila}, ${district}</td>
           <td>${phone}</td>
           <td>${email}</td>
           <td>${date}</td>
@@ -213,49 +256,34 @@ const showContactList = () => {
       `;
   });
 };
-const getStorage = (arraySize) => {
+const showStorageInModal = (arraySize) => {
   let phoneBookSize = new Blob([JSON.stringify(phoneBook)]).size;
   arraySize.innerText = phoneBookSize / 1000 + "KB";
 };
 
 //---------------UTILITIES---------------
-const formInputRef = () => {
-  const firstNameEl = document.getElementById("first-name"),
-    lastNameEl = document.getElementById("last-name"),
-    emailEl = document.getElementById("email"),
-    phoneEl = document.getElementById("phone-number"),
-    addressEl = document.getElementById("address"),
-    countryEl = document.getElementById("country-list");
-
-  return {
-    firstNameEl,
-    lastNameEl,
-    emailEl,
-    phoneEl,
-    addressEl,
-    countryEl,
-  };
-};
 const formInputValue = () => {
-  let { firstNameEl, lastNameEl, emailEl, phoneEl, addressEl, countryEl } =
-    formInputRef();
-
   let obj = {
     firstName: firstNameEl.value,
     lastName: lastNameEl.value,
     email: emailEl.value,
     phone: phoneEl.value,
-    address: addressEl.value,
-    country: countryEl.value,
+    district: districtEl.value,
+    upazila: upazilaEl.value,
   };
 
-  let { firstName, lastName, email, phone } = obj;
+  let { firstName, lastName, email, phone, district, upazila } = obj;
 
-  if (!obj.firstName || !obj.lastName || !email || !phone || !obj.address) {
-    return false;
-  }
-
-  if (!isEmail(email) || !isValidPhone(phone)) {
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !phone ||
+    !district ||
+    !upazila ||
+    !isValidEmail(email) ||
+    !isValidPhone(phone)
+  ) {
     return false;
   }
 
@@ -266,7 +294,7 @@ const formInputValue = () => {
 const setLocalStorage = (name, value) => {
   localStorage.setItem(name, JSON.stringify(value));
 };
-const isEmail = (emailAddress) => {
+const isValidEmail = (emailAddress) => {
   let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (emailAddress.match(regex)) return true;
   else return false;

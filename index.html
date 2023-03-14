@@ -5,7 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MailBook</title>
-    <link rel="stylesheet" href="app/main.css" />
+    <link rel="stylesheet" href="app/css/main.css" />
+    <script src="app/js/app.js" defer></script>
     <!-- font awesome icons -->
     <link
       rel="stylesheet"
@@ -86,20 +87,15 @@
 
           <div class="modal-row grid-row">
             <div class="modal-col">
-              <label for="">Address</label>
-              <input
-                type="text"
-                placeholder="City name"
-                class="form-control"
-                name="city"
-                id="address"
-                autocomplete="off"
-              />
+              <label for="">District</label>
+              <select id="district-list" name="district">
+                <option selected>--District--</option>
+              </select>
             </div>
             <div class="modal-col">
-              <label for="">Country</label>
-              <select id="country-list" name="country">
-                <option selected>Bangladesh</option>
+              <label for="">Upazila</label>
+              <select id="upazila-list" name="upazila">
+                <option selected>--Upazila--</option>
               </select>
             </div>
           </div>
@@ -111,11 +107,11 @@
     <!-- end of form modal -->
 
     <!-- help modal start -->
-    <form class="modal" id="help-modal">
+    <div class="modal" id="help-modal">
       <div class="modal-content">
         <div class="modal-head">
           <h3 id="modal-title">Help</h3>
-          <button type="button" id="help-close-btn">
+          <button type="button" id="how-to-use-close-btn">
             <i class="fas fa-times"></i>
           </button>
         </div>
@@ -128,7 +124,7 @@
           </ul>
         </div>
       </div>
-    </form>
+    </div>
     <!-- help modal end -->
 
     <!-- address book home -->
@@ -182,7 +178,5 @@
       </div>
     </div>
     <!-- end of address book home -->
-
-    <script src="app/app.js"></script>
   </body>
 </html>

@@ -6,13 +6,13 @@
 
 //----------------GLOBAL VARIABLES-----------------
 let phoneBook = JSON.parse(localStorage.getItem("phoneBook")) || [];
-console.log(phoneBook);
-const firstNameEl = document.getElementById("first-name"),
-  lastNameEl = document.getElementById("last-name"),
-  emailEl = document.getElementById("email"),
-  phoneEl = document.getElementById("phone-number"),
-  upazilaEl = document.getElementById("upazila-list"),
-  districtEl = document.getElementById("district-list");
+
+const firstNameInputEle = document.getElementById("first-name"),
+  lastNameInputEle = document.getElementById("last-name"),
+  emailInputEle = document.getElementById("email"),
+  phoneInputEle = document.getElementById("phone-number"),
+  upazilaInputEle = document.getElementById("upazila-list"),
+  districtInputEle = document.getElementById("district-list");
 
 //----------------ON LOAD HANDLER-----------------
 window.onload = () => {
@@ -47,10 +47,10 @@ function main() {
   closeBtn.addEventListener("click", () => {
     hideModal("modal");
   });
-  tableBody.addEventListener("dblclick", (event) => {
+  tableBody.addEventListener("dblclick", event => {
     displayModalData(event, modalBtn);
   });
-  modal.addEventListener("submit", (e) => e.preventDefault());
+  modal.addEventListener("submit", e => e.preventDefault());
   howToUseBtn.addEventListener("click", () => {
     showModal("help-modal");
   });
@@ -58,7 +58,7 @@ function main() {
     hideModal("help-modal");
   });
   search.addEventListener("keyup", searchName);
-  sortByDate.addEventListener("change", (e) => {
+  sortByDate.addEventListener("change", e => {
     if (e.target.value === "ascending") {
       sortContact((a, b) => {
         return new Date(a.date).valueOf() - new Date(b.date).valueOf();
@@ -69,14 +69,16 @@ function main() {
       });
     }
   });
-  districtList.addEventListener("change", function (e) {
-    const districtId =
-      e.target.selectedOptions[0].getAttribute("--data-district-id");
+  districtList.addEventListener("change", async function (e) {
+    //get districtId to html attribute
+    const districtId = await getDistrictId(e.target.value);
+
     loadUpazilasData(districtId);
   });
 }
+
 //----------------FETCH DATA-----------------
-async function loadDistrictData() {
+const loadDistrictData = async () => {
   const response = await fetch("app/json/districts.json");
   const data = await response.json();
 
@@ -89,22 +91,32 @@ async function loadDistrictData() {
   }, []);
 
   createDistrictDropdown(newArray);
-}
-async function loadUpazilasData(districtId) {
+};
+const loadUpazilasData = async districtId => {
   const response = await fetch("app/json/upazilas.json");
   const data = await response.json();
-  const upazilaList = data.filter((data) => data.district_id === districtId);
+  const upazilaList = data.filter(data => data.district_id === districtId);
   createUpazilaDropdown(upazilaList);
-}
+};
+const getDistrictId = async districtName => {
+  const response = await fetch("app/json/districts.json");
+  const data = await response.json();
+
+  const districtId = data.find(
+    data => data.name.toLowerCase() === districtName.toLowerCase()
+  );
+
+  return districtId.id;
+};
 
 //---------------EVENT HANDLER---------------
-const showModal = (id) => {
+const showModal = id => {
   const modal = document.getElementById(id);
   const fullScreenDiv = document.getElementById("fullscreen-div");
   fullScreenDiv.style.display = "block";
   modal.style.display = "block";
 };
-const hideModal = (id) => {
+const hideModal = id => {
   const modal = document.getElementById(id);
   const fullScreenDiv = document.getElementById("fullscreen-div");
   fullScreenDiv.style.display = "none";
@@ -141,19 +153,18 @@ const displayModalData = (event, modalBtn) => {
   const selectedId =
     event.target.parentElement.children[0].getAttribute("data-id");
 
-  const targetedObj = phoneBook.find((item) => item.id === selectedId);
+  const targetedObj = phoneBook.find(item => item.id === selectedId);
 
   let { id, firstName, lastName, email, phone, district, upazila } =
     targetedObj;
 
   // replace value
-  firstNameEl.value = firstName;
-  lastNameEl.value = lastName;
-  emailEl.value = email;
-  phoneEl.value = phone;
-  districtEl.value = district;
-  upazilaEl.value = upazila;
-  console.log(upazila);
+  firstNameInputEle.value = firstName;
+  lastNameInputEle.value = lastName;
+  emailInputEle.value = email;
+  phoneInputEle.value = phone;
+  districtInputEle.value = district;
+  upazilaInputEle.value = upazila;
 
   document.getElementById("modal-title").innerHTML = "Change Contact Details";
   modalBtn.innerHTML = `
@@ -161,8 +172,8 @@ const displayModalData = (event, modalBtn) => {
     <button type = "button" id="delete-btn" onclick='deleteContact("${id}")'>Delete </button>
   `;
 };
-const updateContact = (id) => {
-  let index = phoneBook.findIndex((item) => item.id == id);
+const updateContact = id => {
+  let index = phoneBook.findIndex(item => item.id == id);
 
   if (!formInputValue()) return;
   phoneBook[index] = {
@@ -174,15 +185,15 @@ const updateContact = (id) => {
   displayContractList();
   hideModal("modal");
 };
-const deleteContact = (id) => {
-  const index = phoneBook.findIndex((item) => item.id === id);
+const deleteContact = id => {
+  const index = phoneBook.findIndex(item => item.id === id);
   phoneBook.splice(index, 1);
 
   setLocalStorage("phoneBook", phoneBook);
   displayContractList();
   hideModal("modal");
 };
-const searchName = (e) => {
+const searchName = e => {
   let inputValue = e.target.value.toLowerCase();
 
   const tableBody = document.getElementById("table-body");
@@ -202,7 +213,7 @@ const searchName = (e) => {
     }
   });
 };
-const sortContact = (callBack) => {
+const sortContact = callBack => {
   if (phoneBook.length === 0) return;
 
   phoneBook.sort(callBack);
@@ -212,10 +223,10 @@ const sortContact = (callBack) => {
 };
 
 //---------------DOM FUNCTION---------------
-const createDistrictDropdown = (data) => {
+const createDistrictDropdown = data => {
   const districtList = document.getElementById("district-list");
   districtList.innerHTML += data
-    .map((district) => {
+    .map(district => {
       return `
       <option value='${district.name.toLowerCase()}' --data-district-id='${
         district.id
@@ -224,13 +235,13 @@ const createDistrictDropdown = (data) => {
     })
     .join("");
 };
-const createUpazilaDropdown = (data) => {
+const createUpazilaDropdown = data => {
   const upazilaList = document.getElementById("upazila-list");
 
   upazilaList.innerHTML = "";
 
   upazilaList.innerHTML += data
-    .map((upazila) => {
+    .map(upazila => {
       return `
       <option value='${upazila.name}'>${upazila.name}</option>
     `;
@@ -256,7 +267,7 @@ const displayContractList = () => {
       `;
   });
 };
-const showStorageInModal = (arraySize) => {
+const showStorageInModal = arraySize => {
   let phoneBookSize = new Blob([JSON.stringify(phoneBook)]).size;
   arraySize.innerText = phoneBookSize / 1000 + "KB";
 };
@@ -264,12 +275,12 @@ const showStorageInModal = (arraySize) => {
 //---------------UTILITIES---------------
 const formInputValue = () => {
   let obj = {
-    firstName: firstNameEl.value,
-    lastName: lastNameEl.value,
-    email: emailEl.value,
-    phone: phoneEl.value,
-    district: districtEl.value,
-    upazila: upazilaEl.value,
+    firstName: firstNameInputEle.value,
+    lastName: lastNameInputEle.value,
+    email: emailInputEle.value,
+    phone: phoneInputEle.value,
+    district: districtInputEle.value,
+    upazila: upazilaInputEle.value,
   };
 
   let { firstName, lastName, email, phone, district, upazila } = obj;
@@ -294,12 +305,12 @@ const formInputValue = () => {
 const setLocalStorage = (name, value) => {
   localStorage.setItem(name, JSON.stringify(value));
 };
-const isValidEmail = (emailAddress) => {
+const isValidEmail = emailAddress => {
   let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (emailAddress.match(regex)) return true;
   else return false;
 };
-const isValidPhone = (phoneNumber) => {
+const isValidPhone = phoneNumber => {
   var found = phoneNumber.search(
     /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
   );
